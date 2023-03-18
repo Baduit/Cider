@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+# Build
+build
+gcc_build
+msvc_build
+clang_build
+em_build
+emscripten_build
+linux_build
+windows_build

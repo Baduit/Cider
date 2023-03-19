@@ -14,7 +14,7 @@ template <typename T, typename MF, typename... Args>
 concept MemberFunctionArgs = 
 	requires(T&& t, MF mf, Args&&... args)
 	{
-		(t.*mf(std::forward<Args...>(args)...));
+		(t.*mf)(std::forward<Args>(args)...);
 	};
 
 
@@ -38,13 +38,16 @@ using ClassType = typename decltype(DeduceClassTypeFromMemberFunction(std::declv
 template <MemberFunction MF>
 class Wrapper
 {
+	private:
+		using C = helper::ClassType<MF>;
+
 	public:
 		Wrapper(MF member_function):
 			_member_function(member_function)
 		{}
 
 		template <typename... Args>
-		auto operator()(Args&&... args)
+		auto operator()(Args&&... args) requires MemberFunctionArgs<C, MF, Args...>
 		{
 			return [&]<typename T>(T&& t) { return (t.*_member_function)(std::forward<Args>(args)...); };
 		}
